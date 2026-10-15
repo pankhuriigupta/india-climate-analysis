@@ -49,11 +49,8 @@ The original exploratory notebook (`temp_rain.ipynb`) is kept for reference.
 - Decades 1900 (9 years) and 2010 (6 years) are partial.
 - Linear trends are a simple summary, not a causal model. The rainfall result is "no detectable trend," not "no change."
 
-## Dashboard
-
-[Add your dashboard link here]
 
 ## Author
 
 **Pankhuri**, B.Tech CSE (Data Science), SRM Institute of Science and Technology
-[Add LinkedIn link]
+https://www.linkedin.com/in/pankhurigupta444/
