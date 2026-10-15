@@ -1,0 +1,6 @@
+metric,period,slope_per_decade,r_squared
+temp_annual_c,1901-2015,0.117,0.7
+temp_annual_c,1901-1950,0.057,0.113
+temp_annual_c,1976-2015,0.187,0.441
+rain_annual_mm,1901-2015,-2.967,0.008
+rain_jjas_mm,1901-2015,-2.261,0.007

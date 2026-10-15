@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>India Climate Dashboard 1901–2015</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fafaf7;--card:#fff;--tx:#1d2a2f;--mu:#5d6b70;--bd:#e3e6e2;--hot:#d9532f;--cool:#2a7f9e;--gr:#6a9a4a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14191b;--card:#1d2427;--tx:#e8eeee;--mu:#9aa9ad;--bd:#2c373b;--hot:#f0764f;--cool:#55b0d0;--gr:#8cc268}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14191b;--card:#1d2427;--tx:#e8eeee;--mu:#9aa9ad;--bd:#2c373b;--hot:#f0764f;--cool:#55b0d0;--gr:#8cc268}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 4px}.sub{color:var(--mu);margin:0 0 18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.kpi b{display:block;font-size:1.7rem;line-height:1.2}.kpi span{color:var(--mu);font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:12px}
+h2{font-size:1rem;margin:0 0 2px}.note{color:var(--mu);font-size:.82rem;margin:0 0 8px}
+.cv{position:relative;height:260px}
+ul{margin:6px 0 0;padding-left:18px}li{margin:4px 0}
+.concl{margin-top:12px;border-left:4px solid var(--hot)}
+footer{color:var(--mu);font-size:.8rem;margin-top:14px}
+</style></head><body><main>
+<h1>India Climate Dashboard, 1901–2015</h1>
+<p class="sub">National temperature and rainfall: 115 years, 1,380 monthly records. Python → SQL → trend model.</p>
+<div class="kpis">
+<div class="card kpi"><b style="color:var(--hot)">+0.12 °C</b><span>warming per decade (1901–2015, R² 0.70)</span></div>
+<div class="card kpi"><b style="color:var(--hot)">~3.3x</b><span>faster warming after 1975 (0.06 → 0.19 °C/decade)</span></div>
+<div class="card kpi"><b>9 of 10</b><span>hottest years occurred after 1995</span></div>
+<div class="card kpi"><b style="color:var(--cool)">No trend</b><span>in rainfall (R² 0.008); monsoon ≈ 75% of annual rain</span></div>
+</div>
+<div class="grid">
+<div class="card"><h2>Annual temperature and 10-year average</h2><p class="note">Dashed line = 1901–1950 baseline</p><div class="cv"><canvas id="c1"></canvas></div></div>
+<div class="card"><h2>Warming by month (1991–2015 vs 1901–1950)</h2><p class="note">Winter and spring warmed most; monsoon months least</p><div class="cv"><canvas id="c2"></canvas></div></div>
+<div class="card"><h2>Annual rainfall with linear fit</h2><p class="note">Flat fit: no detectable long-term change in the average</p><div class="cv"><canvas id="c3"></canvas></div></div>
+<div class="card"><h2>Deficient and excess monsoon years per decade</h2><p class="note">Beyond 1 std from the long-run Jun–Sep mean</p><div class="cv"><canvas id="c4"></canvas></div></div>
+</div>
+<div class="card concl"><h2>Insights</h2><ul>
+<li><b>Warming is steady and accelerating:</b> the trend is about 3x steeper since 1975, and the early-period fit is weak (R² 0.11), so the acceleration is the more reliable signal.</li>
+<li><b>Cold-season warming leads:</b> February (+1.67 °C), March (+1.37 °C) and December (+1.24 °C) warmed most; June (+0.50 °C) least.</li>
+<li><b>Rainfall average is stable, variability is not:</b> the monsoon share stays near 75%, but deficient years cluster in some decades (1900s: 5, 1910s: 4, 2000s: 3).</li>
+</ul></div>
+<div class="card concl" style="border-left-color:var(--cool)"><h2>Conclusion</h2>
+<p style="margin:4px 0 0">India's national climate shows a clear, accelerating temperature rise but no significant change in average rainfall. For agriculture and water planning, the risk is heat concentrated in the cold season plus year-to-year monsoon swings, not a falling rainfall average. Regional (state-level) data is the next step, since national averages can hide local change.</p></div>
+<footer>Data: India annual temperature (1901–2017) and area-weighted rainfall (1901–2015); overlap 1901–2015. 1900s and 2010s are partial decades (9 and 6 years). Linear trends summarize, they do not explain causes.</footer>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const D={"years":[1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912,1913,1914,1915,1916,1917,1918,1919,1920,1921,1922,1923,1924,1925,1926,1927,1928,1929,1930,1931,1932,1933,1934,1935,1936,1937,1938,1939,1940,1941,1942,1943,1944,1945,1946,1947,1948,1949,1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960,1961,1962,1963,1964,1965,1966,1967,1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015],"temp":[28.96,29.22,28.47,28.49,28.3,28.73,28.65,28.83,28.38,28.53,28.62,28.95,28.67,28.66,28.94,28.82,28.11,28.66,28.66,28.76,28.86,28.8,28.74,28.8,28.67,28.7,28.59,28.98,28.76,28.65,29.15,29.09,28.49,29.03,28.76,28.71,28.7,28.7,28.85,28.88,29.46,28.98,28.8,28.89,28.97,29.37,28.84,28.73,28.89,28.47,29.09,29.16,29.43,28.92,28.76,28.63,28.64,29.34,29.02,29.31,28.72,28.89,29.04,29.09,29.16,29.41,29.14,29.07,29.61,29.47,29.15,29.31,29.44,29.26,28.89,29.27,29.41,29.23,29.63,29.58,29.32,29.12,29.11,29.28,29.61,29.33,29.72,29.55,29.18,29.14,29.32,29.23,29.55,29.46,30.18,29.58,29.05,29.7,29.81,29.75,29.99,30.23,29.75,29.79,29.6,30.06,29.84,29.64,30.3,30.13,29.82,29.81,29.81,29.72,29.9],"roll":[28.96,29.09,28.88,28.79,28.69,28.69,28.69,28.71,28.67,28.66,28.62,28.59,28.61,28.63,28.7,28.71,28.65,28.63,28.66,28.69,28.71,28.69,28.7,28.71,28.69,28.68,28.72,28.76,28.77,28.76,28.78,28.81,28.79,28.81,28.82,28.82,28.83,28.8,28.81,28.84,28.87,28.86,28.89,28.87,28.89,28.96,28.97,28.98,28.98,28.94,28.9,28.92,28.98,28.99,28.97,28.89,28.87,28.93,28.95,29.03,28.99,28.97,28.93,28.94,28.98,29.06,29.11,29.09,29.14,29.16,29.2,29.24,29.29,29.3,29.27,29.26,29.29,29.3,29.31,29.32,29.33,29.31,29.28,29.28,29.36,29.36,29.39,29.43,29.38,29.34,29.34,29.35,29.39,29.41,29.47,29.49,29.42,29.44,29.5,29.56,29.63,29.73,29.75,29.78,29.73,29.77,29.85,29.85,29.89,29.93,29.92,29.87,29.88,29.87,29.9],"rain":[1032.0,1030.0,1190.0,1020.0,975.0,1144.0,1040.0,1097.0,1158.0,1200.0,1048.0,1078.0,1069.0,1214.0,1137.0,1337.0,1480.0,1026.0,1309.0,1048.0,1240.0,1212.0,1176.0,1268.0,1210.0,1247.0,1263.0,1218.0,1208.0,1209.0,1315.0,1219.0,1394.0,1228.0,1143.0,1342.0,1218.0,1307.0,1126.0,1215.0,1081.0,1293.0,1282.0,1319.0,1226.0,1333.0,1237.0,1342.0,1272.0,1172.0,1061.0,1108.0,1223.0,1180.0,1298.0,1386.0,1178.0,1331.0,1382.0,1149.0,1403.0,1196.0,1210.0,1235.0,938.0,1064.0,1148.0,1054.0,1148.0,1247.0,1218.0,948.0,1214.0,1044.0,1290.0,1125.0,1270.0,1239.0,1023.0,1190.0,1172.0,1087.0,1332.0,1156.0,1140.0,1127.0,1079.0,1351.0,1122.0,1401.0,1160.0,1121.0,1202.0,1296.0,1244.0,1182.0,1171.0,1244.0,1132.0,1050.0,1083.0,921.0,1174.0,1071.0,1232.0,1199.0,1216.0,1132.0,959.0,1200.0,1110.0,1074.0,1216.0,1034.0,1093.0],"rainfit":[1199,1199,1198,1198,1198,1197,1197,1197,1197,1196,1196,1196,1195,1195,1195,1194,1194,1194,1194,1193,1193,1193,1192,1192,1192,1192,1191,1191,1191,1190,1190,1190,1189,1189,1189,1189,1188,1188,1188,1187,1187,1187,1186,1186,1186,1186,1185,1185,1185,1184,1184,1184,1184,1183,1183,1183,1182,1182,1182,1181,1181,1181,1181,1180,1180,1180,1179,1179,1179,1178,1178,1178,1178,1177,1177,1177,1176,1176,1176,1176,1175,1175,1175,1174,1174,1174,1173,1173,1173,1173,1172,1172,1172,1171,1171,1171,1170,1170,1170,1170,1169,1169,1169,1168,1168,1168,1167,1167,1167,1167,1166,1166,1166,1165,1165],"months":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"warm":[1.06,1.67,1.37,1.03,0.66,0.5,0.6,0.71,0.8,0.88,1.1,1.24],"dec":["1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"],"monsoon":[826.0,884.0,912.0,936.0,943.0,926.0,886.0,876.0,882.0,901.0,837.0,853.0],"defi":[5,4,1,0,1,1,3,3,2,0,3,2],"exc":[0,2,0,3,1,3,2,2,2,1,0,0],"base":28.77};let charts=[];
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function draw(){
+charts.forEach(c=>c.destroy());charts=[];
+const hot=css("--hot"),cool=css("--cool"),mu=css("--mu"),bd=css("--bd"),gr=css("--gr");
+Chart.defaults.color=mu;Chart.defaults.borderColor=bd;Chart.defaults.font.family="system-ui,sans-serif";
+const opt=(x={})=>Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12}}}},x);
+charts.push(new Chart("c1",{type:"line",data:{labels:D.years,datasets:[
+{label:"Annual temp (°C)",data:D.temp,borderColor:hot+"88",pointRadius:0,borderWidth:1.2},
+{label:"10-yr average",data:D.roll,borderColor:hot,pointRadius:0,borderWidth:2.5},
+{label:"1901–1950 mean",data:D.years.map(()=>D.base),borderColor:mu,borderDash:[6,4],pointRadius:0,borderWidth:1}]},
+options:opt({scales:{x:{ticks:{maxTicksLimit:8}},y:{title:{display:true,text:"°C"}}}})}));
+charts.push(new Chart("c2",{type:"bar",data:{labels:D.months,datasets:[{label:"Warming (°C)",data:D.warm,backgroundColor:D.warm.map(v=>v>=1.0?hot:cool)}]},
+options:opt({plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:"°C change"}}}})}));
+charts.push(new Chart("c3",{type:"line",data:{labels:D.years,datasets:[
+{label:"Annual rainfall (mm)",data:D.rain,borderColor:cool+"99",pointRadius:0,borderWidth:1.2},
+{label:"Linear fit",data:D.rainfit,borderColor:cool,pointRadius:0,borderWidth:2.5}]},
+options:opt({scales:{x:{ticks:{maxTicksLimit:8}},y:{title:{display:true,text:"mm"}}}})}));
+charts.push(new Chart("c4",{type:"bar",data:{labels:D.dec,datasets:[
+{label:"Deficient years",data:D.defi,backgroundColor:hot},{label:"Excess years",data:D.exc,backgroundColor:gr}]},
+options:opt({scales:{y:{ticks:{stepSize:1},title:{display:true,text:"years"}}}})}));
+}
+draw();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw);
+</script></body></html>
